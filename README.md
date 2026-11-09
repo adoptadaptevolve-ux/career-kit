@@ -1,7 +1,8 @@
 # Career Kit
 
 **Beginner guide:** https://adoptadaptevolve-ux.github.io/career-kit/guide/  
-**Skill download:** [download/career-kit.skill](download/career-kit.skill)
+**Skill download:** [download/career-kit.skill](download/career-kit.skill)  
+**Career folder starter:** [download/career-folder-starter.zip](download/career-folder-starter.zip) (numbered folders with a blank `skills.md` master profile, resume, LinkedIn, story bank, rules and job templates)
 
 A free job-search assistant for Claude and ChatGPT. It walks through a job search in the order it happens:
 
@@ -46,7 +47,7 @@ Paste the prompt into a Project's instructions so you don't have to paste it eve
 
 ## Start here
 
-1. Fill in [`candidate-profile-template.md`](skills/career-kit/assets/candidate-profile-template.md), or just attach your resume and let the assistant fill it in and ask for the rest.
+1. Download the [Career folder starter](download/career-folder-starter.zip). Your master profile is `01_profile/skills.md`; Career Kit can fill it in from your resume and ask for the rest.
 2. Save the filled profile. Attach it at the start of every new session so you never retype your history.
 3. Tell it what you need right now.
 
