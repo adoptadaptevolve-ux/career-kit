@@ -190,12 +190,8 @@ th{background:var(--bg);font-size:.8rem;text-transform:uppercase;letter-spacing:
 .cmp.bad{background:var(--warn-bg);border-color:color-mix(in srgb,var(--warn-edge) 35%,transparent);color:var(--warn-ink)}
 .cmp.bad svg{color:var(--warn-edge)}
 .cmp .small{color:inherit;opacity:.85}
-.choices{display:grid;gap:8px;margin-top:10px}
-.choice{font:400 1rem var(--body);text-align:left;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:var(--r-lg);padding:12px 14px;min-height:48px;cursor:pointer;transition:border-color .15s,background-color .15s}
-.choice:hover{border-color:var(--accent)}
-.choice.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 10%,var(--surface))}
-.choice.wrong{border-color:var(--warn-edge);background:var(--warn-bg)}
-.feedback{min-height:1.5em;font-weight:700;margin-top:8px}
+.files{list-style:none;padding:0;margin:8px 0;display:grid;gap:6px}
+.files li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);padding-bottom:6px}
 footer{margin-top:56px;padding-top:16px;border-top:1px solid var(--line);font-size:.85rem;color:var(--ink-3)}
 .reset{background:none;border:0;color:var(--ink-3);text-decoration:underline;font:inherit;font-size:.85rem;cursor:pointer;padding:4px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(8px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:var(--r);font-weight:700;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none}
@@ -204,7 +200,7 @@ footer{margin-top:56px;padding-top:16px;border-top:1px solid var(--line);font-si
 @media (max-width:480px){body{font-size:17px}h1{font-size:1.85rem}.w5 div{grid-template-columns:1fr;gap:0}.sub{margin-left:0}.ai-card{padding:16px}}
 </style>
 </head>
-<body data-app="chatgpt">
+<body data-app="claude">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <linearGradient id="aig" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6366f1"/><stop offset=".5" stop-color="#a855f7"/><stop offset="1" stop-color="#ec4899"/></linearGradient>
@@ -219,8 +215,8 @@ footer{margin-top:56px;padding-top:16px;border-top:1px solid var(--line);font-si
 <div class="bar"><div class="in">
   <div class="top">
     <div class="switch" role="group" aria-label="Which app do you use?">
-      <button id="pick-chatgpt" type="button" aria-pressed="true">ChatGPT</button>
-      <button id="pick-claude" type="button" aria-pressed="false">Claude</button>
+      <button id="pick-claude" type="button" aria-pressed="true">Claude (recommended)</button>
+      <button id="pick-chatgpt" type="button" aria-pressed="false">ChatGPT</button>
     </div>
     <div class="prog" aria-live="polite"><span id="progtext">0 of 0 steps</span><div class="track"><div class="fill" id="progfill"></div></div></div>
   </div>
@@ -239,23 +235,26 @@ footer{margin-top:56px;padding-top:16px;border-top:1px solid var(--line);font-si
   <h1>Get free AI help with your resume and interviews</h1>
   <p class="lead">Career Kit turns a free <span data-for="chatgpt">ChatGPT</span><span data-for="claude">Claude</span> chat into a careful job coach. It reviews your resume like a recruiter and helps you prepare for interviews.</p>
   <ul class="meta">
-    <li><svg aria-hidden="true"><use href="#i-check"/></svg>About 10 minutes</li>
+    <li><svg aria-hidden="true"><use href="#i-check"/></svg>About 20 minutes to set up, once</li>
     <li><svg aria-hidden="true"><use href="#i-check"/></svg>Free account is enough</li>
     <li><svg aria-hidden="true"><use href="#i-check"/></svg>No AI experience needed</li>
   </ul>
 
   <div class="ai-card" id="quickstart">
-    <div class="label"><svg class="spark" aria-hidden="true"><use href="#i-spark"/></svg>Try it in 2 minutes (no setup)</div>
+    <div class="label"><svg class="spark" aria-hidden="true"><use href="#i-spark"/></svg>Set it up once, reuse it every time</div>
+    <p class="small muted" style="margin:6px 0 0">The best way to use Career Kit is a <b>Claude Project</b> with your master profile, <b>skills.md</b>. Then you never repeat your history or paste instructions again.</p>
     <ol class="quick">
-      <li><span>Copy the Career Kit instructions with the button below.</span></li>
-      <li><span>Open a new chat in <a data-for="chatgpt" href="https://chatgpt.com">ChatGPT</a><a data-for="claude" href="https://claude.ai/new">Claude</a> and paste them in.</span></li>
-      <li><span>Attach your resume and ask: "Why am I not getting interviews?"</span></li>
+      <li><span>Create a <b>Career Kit</b> Project and put the instructions in it.</span></li>
+      <li><span>Have Career Kit build your <b>skills.md</b> from your resume.</span></li>
+      <li><span>Save skills.md in the Project. Start one chat per job.</span></li>
     </ol>
     <div class="actions">
-      <button class="btn" type="button" data-copy="prompt" data-ok="Copied. Now paste it in a new chat"><svg class="spark" aria-hidden="true" style="filter:brightness(4)"><use href="#i-spark"/></svg><span>Copy Career Kit instructions</span></button>
-      <a class="btn ghost" href="#level1">Set it up to reuse</a>
+      <a class="btn" href="#level1"><svg class="spark" aria-hidden="true" style="filter:brightness(4)"><use href="#i-spark"/></svg><span>Start the setup</span></a>
+      <button class="btn ghost" type="button" data-copy="prompt" data-ok="Copied"><span>Copy instructions</span></button>
+      <a class="go" href="https://github.com/adoptadaptevolve-ux/career-kit/raw/main/download/career-kit-instructions.txt">Download instructions file</a>
     </div>
-    <details class="preview"><summary>See what you are copying (about 6,500 characters)</summary><pre id="prompt">You are my job-search assistant for this chat. Work through my search in the order below, one phase at a time. Start wherever my request fits, not always at Phase 0.
+    <p class="small muted" style="margin-bottom:0">Just want to try it first? Paste the instructions into any new chat and attach your resume.</p>
+    <details class="preview"><summary>See the instructions (about 6,500 characters)</summary><pre id="prompt">You are my job-search assistant for this chat. Work through my search in the order below, one phase at a time. Start wherever my request fits, not always at Phase 0.
 
 ## Ground rules (apply to everything)
 
@@ -371,24 +370,23 @@ Start by asking what I need help with today, unless I have already said.</pre></
     <div class="cmp bad"><b><svg aria-hidden="true"><use href="#i-warn"/></svg>A careless AI</b>"Spearheaded a customer experience transformation, cutting resolution time by 40%."<span class="small">"40%" was made up, and "spearheaded" is filler. One question from a recruiter and it falls apart.</span></div>
   </div>
 
-  <h3 style="margin-top:28px">2. Try one together</h3>
-  <p class="small muted">Another line from Maria's resume: <b>"Trained new hires."</b> What should Career Kit ask her? Tap one.</p>
-  <div class="choices" role="group" aria-label="Pick the best question">
-    <button type="button" class="choice" data-right="no" data-why="That adds a word, but it's still a guess. Career Kit asks for facts instead of decorating the line.">"Can I change it to 'Led world-class onboarding'?"</button>
-    <button type="button" class="choice" data-right="yes" data-why="How many people and what changed are the facts that make the line strong. Maria said 12 hires, and they were ready in 3 weeks instead of 5.">"How many people did you train, and what changed for them?"</button>
-    <button type="button" class="choice" data-right="no" data-why="Career Kit never fills in numbers for you. A guessed number is the fastest way to lose a recruiter's trust.">"Should I add that you trained 50 people?"</button>
+  <h3 style="margin-top:28px">2. Another line</h3>
+  <p class="small muted">Maria's next line: <b>"Trained new hires."</b></p>
+  <div class="chat">
+    <div class="bubble ai"><div class="who"><svg aria-hidden="true"><use href="#i-spark"/></svg><span class="shimmer">Career Kit</span></div>
+      How many people did you train, and what changed for them?</div>
+    <div class="bubble you">12 new hires. They were ready in 3 weeks instead of 5.</div>
+    <div class="bubble ai"><div class="who"><svg aria-hidden="true"><use href="#i-spark"/></svg><span class="shimmer">Career Kit</span></div>
+      <b>After:</b> "Trained 12 new support hires and cut their ramp-up time from 5 weeks to 3."</div>
   </div>
-  <p class="feedback" id="choice-feedback" aria-live="polite"></p>
+  <p class="small muted">It asked instead of guessing. It didn't decorate the line with words like "world-class," and it didn't make up a number.</p>
 
-  <h3 style="margin-top:28px">3. Your turn</h3>
-  <p class="small muted">Pick the weakest line on your resume. Copy this, add your line, and send it in Career Kit:</p>
-  <div class="starter"><span id="st-yourturn">Make this resume line stronger. Ask me for any number you need. Don't invent anything: "[paste your line here]"</span><button class="btn small" type="button" data-copy="st-yourturn" data-ok="Copied">Copy</button></div>
-  <p class="small" style="margin-top:12px"><b>Check the new line. Does it:</b></p>
+  <h3 style="margin-top:28px">What a good result looks like</h3>
   <ul class="ticks">
-    <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Say what <b>you</b> did, with a clear action word?</span></li>
-    <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Include a real number you gave it?</span></li>
-    <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Say why it mattered?</span></li>
-    <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Contain nothing made up? If not, say "That's not true. Only use my facts."</span></li>
+    <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Says what <b>you</b> did, with a clear action word</span></li>
+    <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Includes a real number that came from you</span></li>
+    <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Says why it mattered</span></li>
+    <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Contains nothing made up</span></li>
   </ul>
 </section>
 
@@ -432,7 +430,9 @@ Start by asking what I need help with today, unless I have already said.</pre></
 
     <li><div class="row"><input type="checkbox" id="s-instr"><label for="s-instr">Put the instructions in the Project</label></div>
       <div class="sub"><p>Open the Project and find <span class="click">Instructions</span><span data-for="claude"> (or "Set project instructions")</span>. Paste, then save.</p>
-        <button class="btn small" type="button" data-copy="prompt" data-ok="Copied. Paste it into the Project's Instructions"><span>Copy Career Kit instructions</span></button>
+        <div class="actions"><button class="btn small" type="button" data-copy="prompt" data-ok="Copied. Paste it into the Project's Instructions"><span>Copy Career Kit instructions</span></button>
+        <a class="go" href="https://github.com/adoptadaptevolve-ux/career-kit/raw/main/download/career-kit-instructions.txt">Download as a file</a></div>
+        <p class="small muted">Save the file in your Career folder too, so you always have a copy.</p>
         <div data-for="chatgpt"><div class="note limit"><svg aria-hidden="true"><use href="#i-limit"/></svg><div><b>Free plan limit</b>Use the Project's Instructions, not ChatGPT's "Custom instructions" setting. That one only holds 1,500 characters.</div></div></div></div></li>
 
     <li><div class="row"><input type="checkbox" id="s-skills"><label for="s-skills">Build your skills.md with Career Kit</label></div>
@@ -442,15 +442,19 @@ Start by asking what I need help with today, unless I have already said.</pre></
           <li>Send the message below. Answer its questions honestly; skip what you don't know.</li></ol>
         <div class="starter"><span id="st-skills">Build my master profile from my resume and call it skills.md. Use the Candidate Profile sections. Ask me only for what's missing.</span><button class="btn small" type="button" data-copy="st-skills" data-ok="Copied">Copy</button></div>
         <p>When it's done, copy its answer into <span class="click">01_profile/skills.md</span> and save.</p>
+        <a class="go" href="https://github.com/adoptadaptevolve-ux/career-kit/raw/main/starter/Career/01_profile/skills.md">Blank skills.md template</a>
         <div data-for="chatgpt"><div class="note limit"><svg aria-hidden="true"><use href="#i-limit"/></svg><div><b>Free plan limit</b>3 file uploads a day. If you hit it, paste your resume text instead.</div></div></div></div></li>
 
     <li><div class="row"><input type="checkbox" id="s-files"><label for="s-files">Add your 5 master files to the Project</label></div>
       <div class="sub"><p>Upload these to the Project's files:</p>
-        <div class="tree">01_profile/skills.md
-02_resumes/resume-for-ai
-03_linkedin/linkedin.md
-04_stories/story-bank.md
-05_rules/rules.md</div>
+        <ul class="files">
+          <li><span class="click">01_profile/skills.md</span><a class="go" href="https://github.com/adoptadaptevolve-ux/career-kit/raw/main/starter/Career/01_profile/skills.md">Template</a></li>
+          <li><span class="click">02_resumes/resume-for-ai</span><span class="small muted">your own file</span></li>
+          <li><span class="click">03_linkedin/linkedin.md</span><a class="go" href="https://github.com/adoptadaptevolve-ux/career-kit/raw/main/starter/Career/03_linkedin/linkedin.md">Template</a></li>
+          <li><span class="click">04_stories/story-bank.md</span><a class="go" href="https://github.com/adoptadaptevolve-ux/career-kit/raw/main/starter/Career/04_stories/story-bank.md">Template</a></li>
+          <li><span class="click">05_rules/rules.md</span><a class="go" href="https://github.com/adoptadaptevolve-ux/career-kit/raw/main/starter/Career/05_rules/rules.md">Template</a></li>
+        </ul>
+        <p class="small muted">All five are already in the Career folder download. These links are for grabbing one file again.</p>
         <div class="note tip"><svg aria-hidden="true"><use href="#i-tip"/></svg><div><b>Tip</b>When a fact changes, fix <b>skills.md</b> first, then upload the new copy. Everything else follows from it.</div></div></div></li>
   </ol>
   <div class="celebrate" id="celebrate-l1" role="status"><b>Your Career Kit is set up.</b> Every new chat in this Project already knows your history. Next: one job at a time.</div>
@@ -461,6 +465,7 @@ Start by asking what I need help with today, unless I have already said.</pre></
   <ol class="steps">
     <li><div class="row"><input type="checkbox" id="s-jobfolder"><label for="s-jobfolder">Make the job's folder and chat</label></div>
       <div class="sub"><p>Copy <span class="click">jobs/_COPY-ME_Company_Role</span> and rename it, like <b>Acme_Support-Lead</b>. Paste the job post into its <span class="click">job-post.txt</span>.</p>
+        <div class="actions"><a class="go" href="https://github.com/adoptadaptevolve-ux/career-kit/raw/main/starter/Career/jobs/_COPY-ME_Company_Role/notes.md">Job notes template</a><a class="go" href="https://github.com/adoptadaptevolve-ux/career-kit/raw/main/starter/Career/jobs/applications-tracker.md">Applications tracker</a></div>
         <p>In your Career Kit Project, start a new chat and give it the same name.</p>
         <div data-for="chatgpt"><div class="note limit"><svg aria-hidden="true"><use href="#i-limit"/></svg><div><b>Free plan limit</b>Paste job posts as text. Save your 3 daily uploads for files.</div></div></div></div></li>
 
@@ -470,7 +475,7 @@ Start by asking what I need help with today, unless I have already said.</pre></
 
     <li><div class="row"><input type="checkbox" id="s-tailor"><label for="s-tailor">Tailor your resume</label></div>
       <div class="sub"><div class="starter"><span id="st-tailor">Tailor my resume to this job. Ask me for any missing numbers.</span><button class="btn small" type="button" data-copy="st-tailor" data-ok="Copied">Copy</button></div>
-        <p class="small muted">Save the result in the job's folder. Then add a row to <span class="click">jobs/applications-tracker.md</span>.</p></div></li>
+        <p class="small muted">Save the result as <span class="click">tailored-resume</span> in the job's folder. Then add a row to <span class="click">jobs/applications-tracker.md</span>.</p></div></li>
 
     <li><div class="row"><input type="checkbox" id="s-ready"><label for="s-ready">Check it before you send</label></div>
       <div class="sub"><div class="starter"><span id="st-ready">Is this ready to send? Run the final check.</span><button class="btn small" type="button" data-copy="st-ready" data-ok="Copied">Copy</button></div>
@@ -478,11 +483,12 @@ Start by asking what I need help with today, unless I have already said.</pre></
 
     <li><div class="row"><input type="checkbox" id="s-interview"><label for="s-interview">Prepare for the interview</label></div>
       <div class="sub"><div class="starter"><span id="st-interview">I have an interview on [day] with [name, title]. Help me prepare, one step at a time.</span><button class="btn small" type="button" data-copy="st-interview" data-ok="Copied">Copy</button></div>
-        <p class="small muted">It goes one step at a time: the company, your gaps, your stories, then a practice interview. Type "done" when the practice ends to get feedback.</p></div></li>
+        <p class="small muted">It goes one step at a time: the company, your gaps, your stories, then a practice interview. Type "done" when the practice ends to get feedback. Save your prep in the job's <span class="click">notes.md</span>.</p></div></li>
 
     <li><div class="row"><input type="checkbox" id="s-after"><label for="s-after">After the interview</label></div>
       <div class="sub"><div class="starter"><span id="st-after">The interview just ended. Help me reflect and write a thank-you note.</span><button class="btn small" type="button" data-copy="st-after" data-ok="Copied">Copy</button></div>
-        <div class="note tip"><svg aria-hidden="true"><use href="#i-tip"/></svg><div><b>Tip</b>Add anything new you learned about yourself to <b>skills.md</b> or <b>story-bank.md</b>. Interview feedback goes in <b>rules.md</b>.</div></div></div></li>
+        <p class="small muted">Save the thank-you note and your reflection in the job's <span class="click">notes.md</span>.</p>
+        <div class="note tip"><svg aria-hidden="true"><use href="#i-tip"/></svg><div><b>Tip</b>Add anything new you learned about yourself to <b>skills.md</b> or <b>story-bank.md</b>, then re-upload it to the Project. Interview feedback goes in <b>rules.md</b>. A fact you corrected goes in the <a href="https://github.com/adoptadaptevolve-ux/career-kit/raw/main/starter/Career/02_resumes/corrections-log.md">corrections log</a>.</div></div></div></li>
   </ol>
 </section>
 
@@ -633,16 +639,8 @@ Start by asking what I need help with today, unless I have already said.</pre></
     flash('Text selected. Tap Copy on your keyboard menu.');
   }
 
-  document.querySelectorAll('.choice').forEach(function(c){
-    c.addEventListener('click',function(){
-      document.querySelectorAll('.choice').forEach(function(x){x.classList.remove('right','wrong')});
-      var ok=c.getAttribute('data-right')==='yes';
-      c.classList.add(ok?'right':'wrong');
-      document.getElementById('choice-feedback').textContent=(ok?'Yes. ':'Not quite. ')+c.getAttribute('data-why');
-    });
-  });
   var saved=store.get('ck-app');
-  setApp(saved==='claude'?'claude':'chatgpt');
+  setApp(saved==='chatgpt'?'chatgpt':'claude');
 })();
 </script>
 </body>
