@@ -31,9 +31,15 @@ Then just talk normally: "here's my resume, why am I not getting interviews?" or
 
 Open [`prompt/career-kit-prompt.md`](prompt/career-kit-prompt.md), copy everything below the line, and paste it as the first message of a new chat. Works with Claude on any plan and with other assistants.
 
-### Option C: ChatGPT Custom GPT
+### Option C: ChatGPT or Claude Project (best free option)
 
-Follow [`chatgpt/SETUP.md`](chatgpt/SETUP.md). It has the instructions, conversation starters, and a `knowledge/` folder with the files to upload.
+Paste the prompt into a Project's instructions so you don't have to paste it every time. Step-by-step help for both apps is in the starter guide below.
+
+> **Note:** The `chatgpt/` folder holds an older Custom GPT setup. OpenAI no longer lets personal accounts create GPTs and is retiring them on Dec 11, 2026, so use a Project instead.
+
+## Beginner starter guide
+
+[`guide/index.html`](guide/index.html) is a one-page, phone-friendly walkthrough for non-technical users: privacy settings, first use, Projects, one folder and one chat per job, optional skill install, free-plan limits and troubleshooting. Open it in a browser, or host it with GitHub Pages.
 
 ## Start here
 

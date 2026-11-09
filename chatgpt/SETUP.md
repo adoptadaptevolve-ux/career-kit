@@ -1,4 +1,6 @@
-# Set up Career Kit as a Custom GPT
+# Set up Career Kit as a Custom GPT (outdated)
+
+> **Outdated (Nov 2026):** OpenAI no longer lets personal ChatGPT accounts (Free, Go, Plus, Pro) create GPTs, and existing GPTs are scheduled to retire on Dec 11, 2026. Use a ChatGPT Project instead: paste `instructions.md` or the copy-paste prompt into the project's instructions. Kept here for reference.
 
 Creating a GPT needs a paid ChatGPT plan. Sharing it by link lets others use it. ChatGPT's menus change, so if a step looks different, look for "GPTs" then "Create" and the "Configure" tab.
 
