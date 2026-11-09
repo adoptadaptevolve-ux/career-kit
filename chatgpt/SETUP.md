@@ -19,7 +19,7 @@ Recruiter-eye resume review, job-posting decoding, honest tailoring, LinkedIn re
 ```
 
 **Instructions**
-Paste the full contents of `instructions.md` (about 4,800 characters, under the 8,000 limit).
+Paste the full contents of `instructions.md` (about 4,400 characters, under the 8,000 limit).
 
 **Conversation starters**
 ```
