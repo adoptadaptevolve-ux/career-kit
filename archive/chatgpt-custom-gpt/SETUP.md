@@ -54,7 +54,7 @@ Upload these 10 files from the repo:
 | recruiter-criteria.md | skills/career-kit/references/recruiter-lens/ |
 | rejection-patterns.md | skills/career-kit/references/recruiter-lens/ |
 
-The `chatgpt/knowledge/` folder has all 10 in one place.
+The `knowledge/` folder next to this file has all 10 in one place.
 
 ## 4. Capabilities
 
