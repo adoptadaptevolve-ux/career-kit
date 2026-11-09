@@ -155,7 +155,7 @@ body[data-app="chatgpt"] span[data-for="chatgpt"],body[data-app="claude"] span[d
 .starters{display:grid;gap:8px;margin-top:10px}
 .starter{display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:8px 8px 8px 14px}
 .starter span{font-size:.95rem}
-.eg{font:600 .7rem var(--mono);color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em}
+.eg{font:700 .85rem var(--body);color:var(--ink-2)}
 
 .tree{font:400 .85rem/1.7 var(--mono);background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:12px;overflow-x:auto;white-space:pre;margin-top:8px}
 .habits{display:grid;gap:10px;margin-top:16px;padding:0;list-style:none}
@@ -192,6 +192,19 @@ th{background:var(--bg);font-size:.8rem;text-transform:uppercase;letter-spacing:
 .cmp .small{color:inherit;opacity:.85}
 .files{list-style:none;padding:0;margin:8px 0;display:grid;gap:6px}
 .files li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);padding-bottom:6px}
+
+.prog .ring{width:28px;height:28px;transform:rotate(-90deg);flex:none}
+.ring-bg{fill:none;stroke:var(--line);stroke-width:4}
+.ring-fg{fill:none;stroke:var(--good);stroke-width:4;stroke-linecap:round;stroke-dasharray:94.25;stroke-dashoffset:94.25;transition:stroke-dashoffset .3s ease-out}
+.jumps{-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent);padding-right:24px}
+.jumps a:last-child{margin-right:8px}
+@media (max-width:640px){
+  .bar .in{gap:6px;padding:6px 12px}
+  .switch button{padding:6px 12px;min-height:36px;font-size:.9rem}
+  .rec{display:none}
+  .jumps{max-height:40px;overflow-y:hidden;transition:max-height .2s ease-out,opacity .2s}
+  body.scrolled .jumps{max-height:0;opacity:0;pointer-events:none;padding-bottom:0}
+}
 footer{margin-top:56px;padding-top:16px;border-top:1px solid var(--line);font-size:.85rem;color:var(--ink-3)}
 .reset{background:none;border:0;color:var(--ink-3);text-decoration:underline;font:inherit;font-size:.85rem;cursor:pointer;padding:4px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(8px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:var(--r);font-weight:700;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none}
@@ -215,10 +228,10 @@ footer{margin-top:56px;padding-top:16px;border-top:1px solid var(--line);font-si
 <div class="bar"><div class="in">
   <div class="top">
     <div class="switch" role="group" aria-label="Which app do you use?">
-      <button id="pick-claude" type="button" aria-pressed="true">Claude (recommended)</button>
+      <button id="pick-claude" type="button" aria-pressed="true">Claude<span class="rec"> (recommended)</span></button>
       <button id="pick-chatgpt" type="button" aria-pressed="false">ChatGPT</button>
     </div>
-    <div class="prog" aria-live="polite"><span id="progtext">0 of 0 steps</span><div class="track"><div class="fill" id="progfill"></div></div></div>
+    <div class="prog" aria-live="polite"><svg class="ring" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15" class="ring-bg"/><circle cx="18" cy="18" r="15" class="ring-fg" id="progring"/></svg><span id="progtext">0 of 0 steps</span></div>
   </div>
   <nav class="jumps" aria-label="Jump to a section">
     <a href="#example">Example</a>
@@ -597,7 +610,7 @@ Start by asking what I need help with today, unless I have already said.</pre></
     var shown=boxes.filter(visible), done=shown.filter(function(b){return b.checked});
     boxes.forEach(function(b){b.closest('li').classList.toggle('done',b.checked)});
     document.getElementById('progtext').textContent=done.length+' of '+shown.length+' steps';
-    document.getElementById('progfill').style.width=(shown.length?done.length/shown.length*100:0)+'%';
+    document.getElementById('progring').style.strokeDashoffset=94.25*(1-(shown.length?done.length/shown.length:0));
     document.querySelectorAll('.jumps a[data-level]').forEach(function(a){
       var sec=document.getElementById(a.getAttribute('data-level'));
       var bs=[].slice.call(sec.querySelectorAll('input[type=checkbox]')).filter(visible);
@@ -639,6 +652,9 @@ Start by asking what I need help with today, unless I have already said.</pre></
     flash('Text selected. Tap Copy on your keyboard menu.');
   }
 
+  var qs=document.getElementById('quickstart');
+  function onScroll(){body.classList.toggle('scrolled',window.scrollY>(qs?qs.offsetTop:300))}
+  window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
   var saved=store.get('ck-app');
   setApp(saved==='chatgpt'?'chatgpt':'claude');
 })();
