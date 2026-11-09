@@ -31,6 +31,10 @@ Then just talk normally: "here's my resume, why am I not getting interviews?" or
 
 Open [`prompt/career-kit-prompt.md`](prompt/career-kit-prompt.md), copy everything below the line, and paste it as the first message of a new chat. Works with Claude on any plan and with other assistants.
 
+### Option C: ChatGPT Custom GPT
+
+Follow [`chatgpt/SETUP.md`](chatgpt/SETUP.md). It has the instructions, conversation starters, and a `knowledge/` folder with the files to upload.
+
 ## Start here
 
 1. Fill in [`candidate-profile-template.md`](skills/career-kit/assets/candidate-profile-template.md), or just attach your resume and let the assistant fill it in and ask for the rest.
