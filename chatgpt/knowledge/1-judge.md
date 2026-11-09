@@ -4,7 +4,7 @@ Goal: an honest, specific verdict on the candidate's material, with fixes shown 
 
 The guidance reflects widely reported screening behavior, not inside knowledge of any company. Present thresholds and patterns as tendencies, never rules.
 
-Deeper reference material (from the original recruiter-lens repo, MIT) lives in `references/recruiter-lens/`. Read the matching file when it helps:
+Deeper reference material (from the original recruiter-lens repo, MIT) lives in `references/recruiter-lens/` (in some installs, such as a project that already holds recruiter-lens, it is under `recruiter-lens/references/` instead; either works). Read the matching file when it helps:
 
 - `commands.md` for per-command detail
 - `ats-specs.md` before any `ats-check` (dated guidance; platforms change)
@@ -39,7 +39,7 @@ Pick the closest command from the request and name it in a few words.
 **Optimization**
 - `format-fix`, `keyword-match`, `impact-boost`, `red-flag-review`. Report the problem here; the rewritten version is Phase 3.
 
-Aliases: review, audit, improve -> critique (audit -> linkedin-audit for a profile). first-impression, quick-scan -> scan. why-rejected -> reject-reasons. interview-prep, questions -> predict-questions. ats-fix -> format-fix.
+Aliases: review, audit, improve -> critique (audit -> linkedin-audit for a profile). first-impression, quick-scan -> scan. why-rejected, rejection -> reject-reasons. interview-prep, questions -> predict-questions. ats-fix, fix-format -> format-fix. ai-rules, authentic-use -> ai-guidelines. tailor, optimize (as a coverage check against a JD) -> gap-analysis in Phase 2; a request to rewrite for the JD goes to Phase 3.
 
 A bare request with no clear command: show a short menu and stop.
 

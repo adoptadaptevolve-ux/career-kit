@@ -4,6 +4,8 @@ Goal: work out what the employer actually wants, and how well the candidate alre
 
 **Needs:** the JD (required), the resume or Candidate Profile.
 
+This phase is recruiter-lens's `gap-analysis` and `tailor` (coverage) command: it reports how well real experience covers the JD and how to reposition it. Writing the tailored resume itself is Phase 3.
+
 ## Output, in this order
 
 1. **Role in one sentence:** the problem this hire exists to solve, in plain words.
