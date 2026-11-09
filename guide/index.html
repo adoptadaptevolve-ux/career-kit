@@ -8,192 +8,234 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Atkinson+Hyperlegible+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-/* Layout idea: one calm reading column, a sticky app switch, numbered steps with checkboxes, yellow sticky-note callouts for free-plan limits. */
+/* Layout idea: a calm gray reading column; the AI "presence" (prompt box, chat bubbles) carries the only iridescent gradient.
+   Tokens translate Tailwind: gray-50/900 neutrals, indigo-600 accent, spacing on a 4px scale, rounded-lg cards, shadow-sm.
+   Atkinson Hyperlegible kept over Inter on purpose: the audience is non-technical and reading on phones. */
 :root{
-  --ink:#1b2a3a; --muted:#536274; --paper:#f6f4ef; --card:#ffffff;
-  --accent:#1d5c8f; --accent-soft:#e3eef7; --note:#fff3c4; --note-edge:#d9a400;
-  --good:#2f7d4f; --line:#ddd8cc;
+  --bg:#f9fafb; --surface:#ffffff; --ink:#111827; --ink-2:#4b5563; --ink-3:#6b7280; --line:#e5e7eb;
+  --accent:#4f46e5; --accent-ink:#ffffff; --accent-soft:#eef2ff;
+  --ai-1:#6366f1; --ai-2:#a855f7; --ai-3:#ec4899;
+  --limit-bg:#fffbeb; --limit-edge:#d97706; --limit-ink:#78350f;
+  --tip-bg:#eef2ff; --tip-edge:#6366f1; --tip-ink:#312e81;
+  --warn-bg:#fff1f2; --warn-edge:#e11d48; --warn-ink:#881337;
+  --good:#059669;
   --body:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono:"Atkinson Hyperlegible Mono", ui-monospace, Menlo, Consolas, monospace;
-  color-scheme: light;
+  --r:8px; --r-lg:12px; --r-xl:16px;
+  color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --ink:#e8ecf1; --muted:#a6b2c0; --paper:#141a21; --card:#1c242e;
-    --accent:#7fb6e6; --accent-soft:#1f3346; --note:#3a3214; --note-edge:#e0b43a;
-    --good:#6cc890; --line:#2e3946; color-scheme: dark;
+    --bg:#0b0f17; --surface:#131a26; --ink:#f3f4f6; --ink-2:#c3c9d4; --ink-3:#9aa3b2; --line:#263042;
+    --accent:#818cf8; --accent-ink:#0b0f17; --accent-soft:#1e2340;
+    --limit-bg:#2a1f0a; --limit-edge:#f59e0b; --limit-ink:#fde68a;
+    --tip-bg:#1c1f3d; --tip-edge:#818cf8; --tip-ink:#c7d2fe;
+    --warn-bg:#2d1018; --warn-edge:#fb7185; --warn-ink:#fecdd3;
+    --good:#34d399; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --ink:#e8ecf1; --muted:#a6b2c0; --paper:#141a21; --card:#1c242e;
-  --accent:#7fb6e6; --accent-soft:#1f3346; --note:#3a3214; --note-edge:#e0b43a;
-  --good:#6cc890; --line:#2e3946; color-scheme: dark;
+  --bg:#0b0f17; --surface:#131a26; --ink:#f3f4f6; --ink-2:#c3c9d4; --ink-3:#9aa3b2; --line:#263042;
+  --accent:#818cf8; --accent-ink:#0b0f17; --accent-soft:#1e2340;
+  --limit-bg:#2a1f0a; --limit-edge:#f59e0b; --limit-ink:#fde68a;
+  --tip-bg:#1c1f3d; --tip-edge:#818cf8; --tip-ink:#c7d2fe;
+  --warn-bg:#2d1018; --warn-edge:#fb7185; --warn-ink:#fecdd3;
+  --good:#34d399; color-scheme:dark;
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--paper);color:var(--ink);font:400 19px/1.55 var(--body)}
-.wrap{max-width:720px;margin:0 auto;padding:0 18px 64px}
-h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0}
-h1{font-size:2rem}
-h2{font-size:1.45rem;margin-bottom:.4rem}
-h3{font-size:1.1rem}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:120px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 18px/1.65 var(--body)}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px 80px}
+h1,h2,h3{line-height:1.2;text-wrap:balance;margin:0;font-weight:700}
+h1{font-size:2.25rem;letter-spacing:-.02em}
+h2{font-size:1.5rem;letter-spacing:-.01em}
+h3{font-size:1.125rem}
 p{margin:.5rem 0}
-a{color:var(--accent)}
-:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
-header.top{padding:28px 0 12px}
-.stamp{display:inline-block;font:600 .8rem var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:2px 10px;margin-bottom:10px}
-.lead{font-size:1.15rem;color:var(--muted)}
-.bar{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line);padding:10px 0}
-.bar .in{max-width:720px;margin:0 auto;padding:0 18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
-.switch{display:flex;border:2px solid var(--accent);border-radius:12px;overflow:hidden}
-.switch button{font:700 1rem var(--body);padding:10px 16px;border:0;background:transparent;color:var(--accent);cursor:pointer;min-height:44px}
-.switch button[aria-pressed="true"]{background:var(--accent);color:var(--paper)}
-.prog{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted)}
-.prog .track{width:110px;height:10px;background:var(--line);border-radius:99px;overflow:hidden}
-.prog .fill{height:100%;width:0;background:var(--good);transition:width .3s}
-section{margin-top:34px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
-.w5{display:grid;gap:10px}
-.w5 div{display:grid;grid-template-columns:5.2rem 1fr;gap:10px;align-items:baseline}
+a{color:var(--accent);text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+.muted{color:var(--ink-2)}
+.small{font-size:.875rem}
+
+/* Sticky bar: app switch, section jumps, progress */
+.bar{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar .in{max-width:720px;margin:0 auto;padding:8px 16px;display:grid;gap:8px}
+.bar .top{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.switch{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px;gap:4px}
+.switch button{font:700 .95rem var(--body);padding:8px 16px;border:0;border-radius:999px;background:transparent;color:var(--ink-2);cursor:pointer;min-height:40px;transition:background-color .15s,color .15s}
+.switch button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.prog{display:flex;align-items:center;gap:8px;font-size:.875rem;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.prog .track{width:96px;height:8px;background:var(--line);border-radius:999px;overflow:hidden}
+.prog .fill{height:100%;width:0;background:var(--good);transition:width .3s ease-out}
+.jumps{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.jumps::-webkit-scrollbar{display:none}
+.jumps a{flex:none;font-size:.85rem;font-weight:700;text-decoration:none;color:var(--ink-2);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 12px;min-height:32px;display:inline-flex;align-items:center;gap:6px}
+.jumps a .ct{font-weight:400;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.jumps a.complete{border-color:var(--good);color:var(--good)}
+.jumps a.complete .ct{color:var(--good)}
+
+/* Hero */
+.hero{padding:32px 0 8px}
+.stamp{display:inline-flex;align-items:center;gap:6px;font:600 .75rem var(--mono);color:var(--ink-3);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin-bottom:12px}
+.lead{font-size:1.15rem;color:var(--ink-2);margin-top:12px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 16px;margin:12px 0 0;padding:0;list-style:none;font-size:.9rem;color:var(--ink-2)}
+.meta li{display:flex;gap:6px;align-items:center}
+.meta svg{width:18px;height:18px;color:var(--good)}
+
+/* AI presence: the gradient lives only here */
+.ai-card{position:relative;margin-top:24px;border-radius:var(--r-xl);padding:20px;background:
+  linear-gradient(var(--surface),var(--surface)) padding-box,
+  linear-gradient(120deg,var(--ai-1),var(--ai-2),var(--ai-3)) border-box;
+  border:2px solid transparent;box-shadow:0 10px 30px -12px color-mix(in srgb,var(--ai-2) 35%,transparent)}
+.ai-card .label{display:flex;align-items:center;gap:8px;font-weight:700}
+.spark{width:22px;height:22px;flex:none}
+.quick{display:grid;gap:8px;margin:14px 0 16px;padding:0;list-style:none;counter-reset:q}
+.quick li{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;counter-increment:q}
+.quick li::before{content:counter(q);display:grid;place-items:center;width:28px;height:28px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:.9rem}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{font:700 1rem var(--body);background:var(--accent);color:var(--accent-ink);border:0;border-radius:var(--r);padding:12px 20px;min-height:48px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:transform .15s ease-out,filter .15s}
+.btn:hover{filter:brightness(1.08)}
+.btn:active{transform:scale(.98)}
+.btn.ok{background:var(--good)}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--line)}
+.btn.small{font-size:.875rem;padding:8px 14px;min-height:40px}
+.preview pre{max-height:240px;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:12px;font:400 .8rem/1.5 var(--mono);white-space:pre-wrap;margin:10px 0 0}
+
+/* Sections */
+section{margin-top:48px}
+.sec-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.tag{font:600 .75rem var(--mono);color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:2px 8px;white-space:nowrap}
+.time{font-size:.875rem;color:var(--ink-3)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;box-shadow:0 1px 2px rgba(17,24,39,.04)}
+.w5{display:grid;gap:12px}
+.w5 div{display:grid;grid-template-columns:5rem 1fr;gap:12px;align-items:baseline}
 .w5 b{color:var(--accent)}
-.level{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
-.level .tag{font:600 .8rem var(--mono);color:var(--paper);background:var(--accent);border-radius:6px;padding:2px 8px;white-space:nowrap}
-ol.steps{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:12px;counter-reset:s}
-ol.steps>li{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;counter-increment:s}
-ol.steps>li.done{border-color:var(--good)}
-.row{display:flex;gap:12px;align-items:flex-start}
-.row input[type=checkbox]{width:26px;height:26px;margin-top:2px;accent-color:var(--good);flex:none}
-.row label{font-weight:700;cursor:pointer}
-.row label::before{content:counter(s) ". ";color:var(--muted)}
-.sub{margin:6px 0 0 38px}
-.sub ol,.sub ul{margin:.3rem 0;padding-left:1.3rem}
-.sub li{margin:.25rem 0}
-.click{font:600 .92em var(--mono);background:var(--accent-soft);border-radius:6px;padding:1px 6px;overflow-wrap:anywhere}
-.note{background:var(--note);border-left:5px solid var(--note-edge);border-radius:8px;padding:10px 12px;margin:10px 0 0;font-size:.95rem}
-.note::before{content:"Free plan note: ";font-weight:700}
-.note.tip::before{content:"Tip: "}
-.note.warn::before{content:"Careful: "}
+
+/* Steps */
+ol.steps{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:12px;counter-reset:s}
+ol.steps>li{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px;counter-increment:s;box-shadow:0 1px 2px rgba(17,24,39,.04);transition:border-color .2s}
+ol.steps>li.done{border-color:color-mix(in srgb,var(--good) 55%,var(--line))}
+.row{display:flex;gap:12px;align-items:center;min-height:44px}
+.row input[type=checkbox]{appearance:none;-webkit-appearance:none;width:28px;height:28px;flex:none;border:2px solid var(--ink-3);border-radius:8px;display:grid;place-items:center;cursor:pointer;background:var(--surface);transition:background-color .15s,border-color .15s;margin:0}
+.row input[type=checkbox]::after{content:"";width:12px;height:7px;border:solid var(--surface);border-width:0 0 3px 3px;transform:rotate(-45deg) translate(1px,-1px);opacity:0}
+.row input[type=checkbox]:checked{background:var(--good);border-color:var(--good)}
+.row input[type=checkbox]:checked::after{opacity:1}
+.row label{font-weight:700;cursor:pointer;flex:1}
+.row label::before{content:counter(s) ". ";color:var(--ink-3)}
+li.done .row label{color:var(--ink-2)}
+.sub{margin:8px 0 0 40px}
+.sub ol,.sub ul{margin:.4rem 0;padding-left:1.3rem}
+.sub li{margin:.3rem 0}
+.click{font:600 .9em var(--mono);background:var(--accent-soft);color:var(--ink);border-radius:6px;padding:1px 6px;overflow-wrap:anywhere}
+
+/* Notes: three distinct kinds, each with its own color and icon (Law of Similarity) */
+.note{display:grid;grid-template-columns:20px 1fr;gap:10px;border-radius:var(--r);padding:10px 12px;margin:12px 0 0;font-size:.95rem;border:1px solid}
+.note svg{width:20px;height:20px;margin-top:3px}
+.note b{display:block;font-size:.8rem;letter-spacing:.02em;text-transform:uppercase}
+.note.limit{background:var(--limit-bg);border-color:color-mix(in srgb,var(--limit-edge) 35%,transparent);color:var(--limit-ink)}
+.note.limit svg{color:var(--limit-edge)}
+.note.tip{background:var(--tip-bg);border-color:color-mix(in srgb,var(--tip-edge) 35%,transparent);color:var(--tip-ink)}
+.note.tip svg{color:var(--tip-edge)}
+.note.warn{background:var(--warn-bg);border-color:color-mix(in srgb,var(--warn-edge) 35%,transparent);color:var(--warn-ink)}
+.note.warn svg{color:var(--warn-edge)}
 details{margin-top:8px}
-summary{cursor:pointer;color:var(--accent);font-weight:700;min-height:32px}
+summary{cursor:pointer;color:var(--accent);font-weight:700;min-height:36px;display:flex;align-items:center}
 [data-for]{display:none}
 body[data-app="chatgpt"] [data-for="chatgpt"],body[data-app="claude"] [data-for="claude"]{display:block}
 body[data-app="chatgpt"] span[data-for="chatgpt"],body[data-app="claude"] span[data-for="claude"]{display:inline}
-.copybox{position:relative;margin-top:10px}
-.copybox pre{max-height:220px;overflow:auto;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px;font:400 .82rem/1.45 var(--mono);white-space:pre-wrap}
-.btn{font:700 1rem var(--body);background:var(--accent);color:var(--paper);border:0;border-radius:10px;padding:12px 18px;min-height:46px;cursor:pointer}
-.btn.small{font-size:.9rem;padding:8px 12px;min-height:38px}
-.starters{display:grid;gap:10px;margin-top:10px}
-.starter{display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
-.tree{font:400 .88rem/1.6 var(--mono);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px;overflow-x:auto;white-space:pre}
-.tablewrap{overflow-x:auto;margin-top:10px}
-table{border-collapse:collapse;width:100%;font-size:.92rem;background:var(--card)}
-th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
-th{background:var(--accent-soft)}
-.example{border-left:5px solid var(--accent);padding-left:14px}
-.dos{display:grid;gap:8px;padding:0;margin:10px 0 0;list-style:none}
-.dos li{display:grid;grid-template-columns:28px 1fr;gap:6px}
-.dos svg{width:22px;height:22px;color:var(--good);margin-top:3px}
-.faq dt{font-weight:700;margin-top:12px}
-.faq dd{margin:4px 0 0}
-footer{margin-top:44px;font-size:.85rem;color:var(--muted)}
-.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:10px;font-weight:700;opacity:0;transition:opacity .2s;pointer-events:none}
-.toast.show{opacity:1}
-@media (prefers-reduced-motion: reduce){*{transition:none!important}}
-@media (max-width:420px){body{font-size:18px}h1{font-size:1.7rem}.w5 div{grid-template-columns:1fr;gap:0}.sub{margin-left:0}}
+
+/* Chat preview: starters and an example reply */
+.chat{display:grid;gap:10px;margin-top:12px}
+.bubble{max-width:92%;border-radius:16px;padding:10px 14px;font-size:.95rem}
+.bubble.you{justify-self:end;background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:4px}
+.bubble.ai{justify-self:start;background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:4px}
+.bubble.ai .who{display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--ink-3);margin-bottom:4px}
+.bubble.ai .who svg{width:16px;height:16px}
+.shimmer{background:linear-gradient(90deg,var(--ink-3) 0%,var(--ai-2) 50%,var(--ink-3) 100%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 2.4s linear infinite}
+@keyframes shine{to{background-position:200% center}}
+.starters{display:grid;gap:8px;margin-top:10px}
+.starter{display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:8px 8px 8px 14px}
+.starter span{font-size:.95rem}
+.eg{font:600 .7rem var(--mono);color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em}
+
+.tree{font:400 .85rem/1.7 var(--mono);background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:12px;overflow-x:auto;white-space:pre;margin-top:8px}
+.habits{display:grid;gap:10px;margin-top:16px;padding:0;list-style:none}
+@media (min-width:640px){.habits{grid-template-columns:1fr 1fr}}
+.habits li{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:14px}
+.habits b{display:block}
+.example{border-left:4px solid var(--accent)}
+.tablewrap{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:var(--r-lg)}
+table{border-collapse:collapse;width:100%;font-size:.9rem;background:var(--surface)}
+th,td{border-bottom:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{background:var(--bg);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-2)}
+.faq dt{font-weight:700;margin-top:14px}
+.faq dt:first-child{margin-top:0}
+.faq dd{margin:4px 0 0;color:var(--ink-2)}
+.ticks{display:grid;gap:8px;padding:0;margin:12px 0 0;list-style:none}
+.ticks li{display:grid;grid-template-columns:24px 1fr;gap:8px}
+.ticks svg{width:20px;height:20px;color:var(--good);margin-top:4px}
+.celebrate{display:none;margin-top:16px;border-radius:var(--r-lg);padding:16px;background:linear-gradient(120deg,color-mix(in srgb,var(--ai-1) 12%,var(--surface)),color-mix(in srgb,var(--ai-3) 10%,var(--surface)));border:1px solid var(--line)}
+.celebrate.show{display:block}
+footer{margin-top:56px;padding-top:16px;border-top:1px solid var(--line);font-size:.85rem;color:var(--ink-3)}
+.reset{background:none;border:0;color:var(--ink-3);text-decoration:underline;font:inherit;font-size:.85rem;cursor:pointer;padding:4px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(8px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:var(--r);font-weight:700;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}.shimmer{color:var(--ink-3);background:none}}
+@media (max-width:480px){body{font-size:17px}h1{font-size:1.85rem}.w5 div{grid-template-columns:1fr;gap:0}.sub{margin-left:0}.ai-card{padding:16px}}
 </style>
 </head>
 <body data-app="chatgpt">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="aig" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6366f1"/><stop offset=".5" stop-color="#a855f7"/><stop offset="1" stop-color="#ec4899"/></linearGradient>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path fill="url(#aig)" d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9L12 2zm7 12l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9L19 14z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-limit" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g></symbol>
+    <symbol id="i-tip" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V16h8v-1.3A7 7 0 0 0 12 2z"/></g></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></g></symbol>
+  </defs>
+</svg>
+
 <div class="bar"><div class="in">
-  <div class="switch" role="group" aria-label="Which app do you use?">
-    <button id="pick-chatgpt" type="button" aria-pressed="true">I use ChatGPT</button>
-    <button id="pick-claude" type="button" aria-pressed="false">I use Claude</button>
+  <div class="top">
+    <div class="switch" role="group" aria-label="Which app do you use?">
+      <button id="pick-chatgpt" type="button" aria-pressed="true">ChatGPT</button>
+      <button id="pick-claude" type="button" aria-pressed="false">Claude</button>
+    </div>
+    <div class="prog" aria-live="polite"><span id="progtext">0 of 0 steps</span><div class="track"><div class="fill" id="progfill"></div></div></div>
   </div>
-  <div class="prog" aria-live="polite"><span id="progtext">0 of 0 done</span><div class="track"><div class="fill" id="progfill"></div></div></div>
+  <nav class="jumps" aria-label="Jump to a section">
+    <a href="#level1" data-level="level1">Set up <span class="ct"></span></a>
+    <a href="#level2" data-level="level2">First use <span class="ct"></span></a>
+    <a href="#level3" data-level="level3">Project <span class="ct"></span></a>
+    <a href="#level4" data-level="level4">Skill <span class="ct"></span></a>
+    <a href="#help">Help</a>
+  </nav>
 </div></div>
 
 <div class="wrap">
-<header class="top">
+<header class="hero">
   <span class="stamp">Free plan limits checked Nov 9, 2026</span>
-  <h1>Career Kit: free AI help for your job search</h1>
-  <p class="lead">In about 10 minutes, get your resume reviewed by AI and start preparing for interviews. You only need a free <span data-for="chatgpt">ChatGPT</span><span data-for="claude">Claude</span> account.</p>
-</header>
-
-<section id="what">
-  <h2>What is this?</h2>
-  <div class="card w5">
-    <div><b>Who</b><span>Anyone looking for a job. You do not need to know anything about AI.</span></div>
-    <div><b>What</b><span>A set of instructions you paste into an AI chat. It turns the chat into a careful job coach.</span></div>
-    <div><b>Where</b><span>Inside the free ChatGPT or Claude app, on a phone or a computer.</span></div>
-    <div><b>Why</b><span>It reviews your resume like a recruiter, tailors it to a job, and preps you for interviews.</span></div>
-    <div><b>When</b><span>Before you apply, before an interview, and right after one.</span></div>
-  </div>
-  <p class="note warn">Career Kit never makes up jobs, numbers or skills. If it needs a fact, it asks you. It cannot promise you a job.</p>
-</section>
-
-<section id="best-use">
-  <h2>How to get the most out of it</h2>
-  <p>Career Kit works best when you treat it like a filing cabinet plus a coach. Here is an example.</p>
-  <div class="card example">
-    <h3>Meet Maria (a made-up example)</h3>
-    <p>Maria works in customer support. She wants to move into customer success. She keeps one "master" profile with her real history. For each job she applies to, she makes one folder and one chat.</p>
-    <p>When a fact changes, like a new title, she fixes her profile first. Then everything else stays correct.</p>
-  </div>
-  <ul class="dos">
-    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>One master profile.</b> Your true work history, numbers and stories live in one file. Everything else is built from it.</span></li>
-    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Numbers stay with their job.</b> "Cut wait times 35% at Acme" always says Acme. Never move a result to another job.</span></li>
-    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Titles and dates match everywhere.</b> Your resume and LinkedIn should agree. Recruiters notice when they don't.</span></li>
-    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Aim at 1 or 2 kinds of roles.</b> A strong base resume for "customer success" beats rewriting from scratch for every post.</span></li>
-    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Name your gaps honestly.</b> List what you don't have yet. You'll get a calm, true answer for interviews.</span></li>
-    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Keep private names private.</b> If a client can't be named, write how to describe it, like "a large hospital system".</span></li>
-    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Short answers win interviews.</b> Answer first. One story. Under 90 seconds. Stop when the point lands.</span></li>
-    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>One folder and one chat per job.</b> It keeps each application tidy and easy to find later.</span></li>
+  <h1>Get free AI help with your resume and interviews</h1>
+  <p class="lead">Career Kit turns a free <span data-for="chatgpt">ChatGPT</span><span data-for="claude">Claude</span> chat into a careful job coach. It reviews your resume like a recruiter and helps you prepare for interviews.</p>
+  <ul class="meta">
+    <li><svg aria-hidden="true"><use href="#i-check"/></svg>About 10 minutes</li>
+    <li><svg aria-hidden="true"><use href="#i-check"/></svg>Free account is enough</li>
+    <li><svg aria-hidden="true"><use href="#i-check"/></svg>No AI experience needed</li>
   </ul>
-</section>
 
-<section id="level1">
-  <div class="level"><span class="tag">Level 1</span><h2>Get set up</h2></div>
-  <p>About 5 minutes. Do these once.</p>
-  <ol class="steps">
-    <li><div class="row"><input type="checkbox" id="s-privacy"><label for="s-privacy">Stop the app from learning from your chats</label></div>
-      <div class="sub">
-        <div data-for="chatgpt"><ol>
-          <li>Tap your name or picture, then <span class="click">Settings</span>.</li>
-          <li>Open <span class="click">Data controls</span>.</li>
-          <li>Turn off <span class="click">Improve the model for everyone</span>.</li>
-        </ol>
-        <p class="note">On free ChatGPT, don't tap thumbs up or down on these chats. Rated chats may still be used.</p></div>
-        <div data-for="claude"><ol>
-          <li>Tap your name, then <span class="click">Settings</span>.</li>
-          <li>Open <span class="click">Privacy</span>.</li>
-          <li>Turn off <span class="click">Help improve Claude</span>.</li>
-        </ol></div>
-        <p class="note">Free chats can be used to train the AI unless you turn this off. It only affects new chats.</p>
-        <details><summary>If it looks different</summary><p>Menus move around. Look for a "Privacy" or "Data" page in Settings. Search the app's help center for "turn off training".</p></details>
-      </div></li>
-
-    <li><div class="row"><input type="checkbox" id="s-safecopy"><label for="s-safecopy">Make a safe copy of your resume</label></div>
-      <div class="sub"><p>Save a copy named <span class="click">resume-for-ai</span>. In that copy, delete:</p>
-        <ul><li>Your home address (keep your city)</li><li>Your phone number</li><li>Your date of birth</li></ul>
-        <p class="note warn">Never paste ID numbers, bank details or passwords into any AI chat.</p></div></li>
-
-    <li><div class="row"><input type="checkbox" id="s-folders"><label for="s-folders">Make your career folders</label></div>
-      <div class="sub"><p>On your computer or in Google Drive, make these folders. Numbers keep them in order.</p>
-<div class="tree">Career/
-  01_profile/        your master profile
-  02_resumes/        master resume + safe copy
-  03_linkedin/       headline and About text
-  04_stories/        your interview stories
-  jobs/
-    Acme_Support-Lead/
-      job-post.txt
-      tailored-resume.docx
-      interview-notes.md</div>
-        <p class="note tip">Make a new folder in <span class="click">jobs</span> for every job you apply to. Name it Company_Role.</p></div></li>
-
-    <li><div class="row"><input type="checkbox" id="s-copy"><label for="s-copy">Copy the Career Kit instructions</label></div>
-      <div class="sub"><p>Tap the button. The instructions are now ready to paste.</p>
-        <div class="copybox"><button class="btn" type="button" data-copy="prompt">Copy Career Kit instructions</button>
-        <details><summary>See what you are copying</summary><pre id="prompt">You are my job-search assistant for this chat. Work through my search in the order below, one phase at a time. Start wherever my request fits, not always at Phase 0.
+  <div class="ai-card" id="quickstart">
+    <div class="label"><svg class="spark" aria-hidden="true"><use href="#i-spark"/></svg>Quick start</div>
+    <ol class="quick">
+      <li><span>Copy the Career Kit instructions with the button below.</span></li>
+      <li><span>Open a new chat in <span data-for="chatgpt">ChatGPT</span><span data-for="claude">Claude</span> and paste them in.</span></li>
+      <li><span>Attach your resume and ask: "Why am I not getting interviews?"</span></li>
+    </ol>
+    <div class="actions">
+      <button class="btn" type="button" data-copy="prompt" data-ok="Copied. Now paste it in a new chat"><svg class="spark" aria-hidden="true" style="filter:brightness(4)"><use href="#i-spark"/></svg><span>Copy Career Kit instructions</span></button>
+      <a class="btn ghost" href="#level1">Show me step by step</a>
+    </div>
+    <details class="preview"><summary>See what you are copying (about 6,500 characters)</summary><pre id="prompt">You are my job-search assistant for this chat. Work through my search in the order below, one phase at a time. Start wherever my request fits, not always at Phase 0.
 
 ## Ground rules (apply to everything)
 
@@ -274,13 +316,69 @@ First ask for: the posting, company site, interviewer name and title (from the i
 - Thank-you to the interviewer: written after the call, under 120 words, one callback to something they said, one link to my real experience, then stop. Never the same text as the recruiter email.
 - Next round: update the prep, don&#x27;t rebuild it. Ask at most 3 questions for missing facts.
 
-Start by asking what I need help with today, unless I have already said.</pre></details></div></div></li>
+Start by asking what I need help with today, unless I have already said.</pre></details>
+  </div>
+</header>
+
+<section id="what">
+  <h2>What is this?</h2>
+  <div class="card w5" style="margin-top:12px">
+    <div><b>Who</b><span>Anyone looking for a job. You don't need to know anything about AI.</span></div>
+    <div><b>What</b><span>Instructions you paste into an AI chat. They turn the chat into a careful job coach.</span></div>
+    <div><b>Where</b><span>The free ChatGPT or Claude app, on a phone or a computer.</span></div>
+    <div><b>Why</b><span>It reviews your resume like a recruiter, tailors it to a job, and preps you for interviews.</span></div>
+    <div><b>When</b><span>Before you apply, before an interview, and right after one.</span></div>
+  </div>
+  <div class="note warn"><svg aria-hidden="true"><use href="#i-warn"/></svg><div><b>Careful</b>Career Kit never makes up jobs, numbers or skills. If it needs a fact, it asks you. It can't promise you a job.</div></div>
+</section>
+
+<section id="level1" data-level="level1">
+  <div class="sec-head"><span class="tag">Level 1</span><h2>Get set up</h2><span class="time">About 5 minutes, once</span></div>
+  <ol class="steps">
+    <li><div class="row"><input type="checkbox" id="s-privacy"><label for="s-privacy">Stop the app from learning from your chats</label></div>
+      <div class="sub">
+        <div data-for="chatgpt"><ol>
+          <li>Tap your name or picture, then <span class="click">Settings</span>.</li>
+          <li>Open <span class="click">Data controls</span>.</li>
+          <li>Turn off <span class="click">Improve the model for everyone</span>.</li>
+        </ol>
+        <div class="note limit"><svg aria-hidden="true"><use href="#i-limit"/></svg><div><b>Free plan limit</b>Don't tap thumbs up or down on these chats. Rated chats may still be used.</div></div></div>
+        <div data-for="claude"><ol>
+          <li>Tap your name, then <span class="click">Settings</span>.</li>
+          <li>Open <span class="click">Privacy</span>.</li>
+          <li>Turn off <span class="click">Help improve Claude</span>.</li>
+        </ol></div>
+        <div class="note limit"><svg aria-hidden="true"><use href="#i-limit"/></svg><div><b>Free plan limit</b>Free chats can train the AI unless you turn this off. It only affects new chats.</div></div>
+        <details><summary>If it looks different</summary><p>Menus move around. Look for a "Privacy" or "Data" page in Settings. Or search the app's help center for "turn off training".</p></details>
+      </div></li>
+
+    <li><div class="row"><input type="checkbox" id="s-safecopy"><label for="s-safecopy">Make a safe copy of your resume</label></div>
+      <div class="sub"><p>Save a copy named <span class="click">resume-for-ai</span>. In that copy, delete:</p>
+        <ul><li>Your home address (keep your city)</li><li>Your phone number</li><li>Your date of birth</li></ul>
+        <div class="note warn"><svg aria-hidden="true"><use href="#i-warn"/></svg><div><b>Careful</b>Never paste ID numbers, bank details or passwords into any AI chat.</div></div></div></li>
+
+    <li><div class="row"><input type="checkbox" id="s-folders"><label for="s-folders">Make your career folders</label></div>
+      <div class="sub"><p>On your computer or in Google Drive, make these folders. The numbers keep them in order.</p>
+<div class="tree">Career/
+  01_profile/        your master profile
+  02_resumes/        master resume + safe copy
+  03_linkedin/       headline and About text
+  04_stories/        your interview stories
+  jobs/
+    Acme_Support-Lead/
+      job-post.txt
+      tailored-resume.docx
+      interview-notes.md</div>
+        <div class="note tip"><svg aria-hidden="true"><use href="#i-tip"/></svg><div><b>Tip</b>Make a new folder in <span class="click">jobs</span> for every job you apply to. Name it Company_Role.</div></div></div></li>
+
+    <li><div class="row"><input type="checkbox" id="s-copy"><label for="s-copy">Copy the Career Kit instructions</label></div>
+      <div class="sub"><p>Use the button below, or the one in Quick start at the top. They copy the same text.</p>
+        <button class="btn" type="button" data-copy="prompt" data-ok="Copied. Now paste it in a new chat"><span>Copy Career Kit instructions</span></button></div></li>
   </ol>
 </section>
 
-<section id="level2">
-  <div class="level"><span class="tag">Level 2</span><h2>Your first real use</h2></div>
-  <p>About 5 minutes. Follow the steps for your app.</p>
+<section id="level2" data-level="level2">
+  <div class="sec-head"><span class="tag">Level 2</span><h2>Your first real use</h2><span class="time">About 5 minutes</span></div>
   <ol class="steps">
     <li><div class="row"><input type="checkbox" id="s-open"><label for="s-open">Open a new chat</label></div>
       <div class="sub">
@@ -290,116 +388,140 @@ Start by asking what I need help with today, unless I have already said.</pre></
 
     <li><div class="row"><input type="checkbox" id="s-paste"><label for="s-paste">Paste the instructions and send</label></div>
       <div class="sub"><p>Press and hold in the message box, then tap <span class="click">Paste</span>. On a computer, press Ctrl+V (Cmd+V on Mac). Tap send.</p>
-        <p>You should see a short reply asking what you need help with.</p>
-        <p class="note" data-for="claude">Long text may turn into a small "Pasted text" box. That is normal. If Claude says it can't see it, paste again with Ctrl+Shift+V (Cmd+Shift+V on Mac).</p>
-        <p class="note" data-for="chatgpt">The instructions are about 6,600 characters. ChatGPT only turns pastes over 10,000 into a file, so yours stays as text.</p></div></li>
+        <div data-for="claude"><div class="note limit"><svg aria-hidden="true"><use href="#i-limit"/></svg><div><b>Free plan limit</b>Long text may turn into a small "Pasted text" box. That's normal. If Claude says it can't see it, paste again with Ctrl+Shift+V (Cmd+Shift+V on Mac).</div></div></div>
+        <div data-for="chatgpt"><div class="note limit"><svg aria-hidden="true"><use href="#i-limit"/></svg><div><b>Free plan limit</b>ChatGPT turns pastes over 10,000 characters into a file. The instructions are about 6,500, so they stay as text.</div></div></div></div></li>
 
     <li><div class="row"><input type="checkbox" id="s-attach"><label for="s-attach">Attach your safe resume copy</label></div>
       <div class="sub">
         <ol data-for="chatgpt"><li>Tap the <span class="click">+</span> in the message box.</li><li>Tap <span class="click">Add photos &amp; files</span>.</li><li>Pick <b>resume-for-ai</b>.</li></ol>
         <ol data-for="claude"><li>Tap the <span class="click">+</span> at the bottom left of the message box.</li><li>Tap <span class="click">Add files or photos</span>.</li><li>Pick <b>resume-for-ai</b>.</li></ol>
-        <p class="note" data-for="chatgpt">Free ChatGPT allows only 3 file uploads a day. Upload just your resume. Paste job posts as text.</p>
-        <p class="note" data-for="claude">Free Claude allows up to 20 files per chat. Big files use up your free allowance faster.</p></div></li>
+        <div data-for="chatgpt"><div class="note limit"><svg aria-hidden="true"><use href="#i-limit"/></svg><div><b>Free plan limit</b>Only 3 file uploads a day. Upload just your resume. Paste job posts as text.</div></div></div>
+        <div data-for="claude"><div class="note limit"><svg aria-hidden="true"><use href="#i-limit"/></svg><div><b>Free plan limit</b>Up to 20 files per chat. Big files use your free allowance faster.</div></div></div></div></li>
 
     <li><div class="row"><input type="checkbox" id="s-ask"><label for="s-ask">Ask your first question</label></div>
-      <div class="sub"><p>Copy one of these, paste it with your resume, and send:</p>
+      <div class="sub"><p>Tap Copy on one of these, paste it, and send:</p>
         <div class="starters">
-          <div class="starter"><span id="st1">Here's my resume. Why am I not getting interviews?</span><button class="btn small" type="button" data-copy="st1">Copy</button></div>
-          <div class="starter"><span id="st2">Set up my Candidate Profile from my resume. Ask me only what's missing.</span><button class="btn small" type="button" data-copy="st2">Copy</button></div>
-          <div class="starter"><span id="st3">Here's a job post I like. Am I a good fit, and what's missing?</span><button class="btn small" type="button" data-copy="st3">Copy</button></div>
+          <div class="starter"><span id="st1">Here's my resume. Why am I not getting interviews?</span><button class="btn small" type="button" data-copy="st1" data-ok="Copied">Copy</button></div>
+          <div class="starter"><span id="st2">Set up my Candidate Profile from my resume. Ask me only what's missing.</span><button class="btn small" type="button" data-copy="st2" data-ok="Copied">Copy</button></div>
+          <div class="starter"><span id="st3">Here's a job post I like. Am I a good fit, and what's missing?</span><button class="btn small" type="button" data-copy="st3" data-ok="Copied">Copy</button></div>
         </div>
-        <details><summary>What you should see</summary><p>A short recruiter-style review, then questions about anything missing, like a number for a result. Answer honestly. Skip what you don't know.</p></details></div></li>
+        <p class="eg" style="margin-top:16px">Example of what you'll see</p>
+        <div class="chat" aria-label="Example conversation">
+          <div class="bubble you">Here's my resume. Why am I not getting interviews?</div>
+          <div class="bubble ai"><div class="who"><svg aria-hidden="true"><use href="#i-spark"/></svg><span class="shimmer">Career Kit</span></div>
+            Assuming a mid-level customer success role in the US. <b>Quick verdict: Maybe.</b> Your experience fits, but your results are hidden. Your top bullet lists duties, not outcomes. How many accounts did you manage?</div>
+        </div>
+        <p class="small muted">It asks for facts it doesn't have. Answer honestly, and skip what you don't know.</p></div></li>
 
     <li><div class="row"><input type="checkbox" id="s-save"><label for="s-save">Save your Candidate Profile</label></div>
       <div class="sub"><p>Ask: <b>"Give me my Candidate Profile to save."</b> Copy the reply into a file in <span class="click">Career/01_profile</span>.</p>
-        <p class="note tip">Next time, paste the instructions and this profile. You'll never retype your history.</p></div></li>
+        <div class="note tip"><svg aria-hidden="true"><use href="#i-tip"/></svg><div><b>Tip</b>Next time, paste the instructions and this profile. You'll never retype your history.</div></div></div></li>
   </ol>
+  <div class="celebrate" id="celebrate-l2" role="status"><b>You're set up.</b> Career Kit knows your history now. Next, try it on a real job post, or save it in a Project so you never paste the instructions again.</div>
 </section>
 
-<section id="level3">
-  <div class="level"><span class="tag">Level 3</span><h2>Make it reusable with a Project</h2></div>
-  <p>A Project is a saved workspace. It remembers the instructions and your files, so you don't paste them every time.</p>
+<section id="habits">
+  <h2>Habits that get better results</h2>
+  <div class="card example" style="margin-top:12px">
+    <h3>Meet Maria (a made-up example)</h3>
+    <p>Maria works in customer support and wants to move into customer success. She keeps one master profile with her real history. For each job, she makes one folder and one chat. When a fact changes, like a new title, she fixes her profile first.</p>
+  </div>
+  <ul class="habits">
+    <li><b>One master profile</b><span class="muted">Your true history, numbers and stories live in one file.</span></li>
+    <li><b>Numbers stay with their job</b><span class="muted">"Cut wait times 35% at Acme" always says Acme.</span></li>
+    <li><b>Titles and dates match</b><span class="muted">Your resume and LinkedIn should agree. Recruiters notice.</span></li>
+    <li><b>Aim at 1 or 2 kinds of roles</b><span class="muted">A strong base resume beats starting over for every post.</span></li>
+    <li><b>Name your gaps honestly</b><span class="muted">List what you don't have yet. You'll get a calm, true answer.</span></li>
+    <li><b>Keep private names private</b><span class="muted">Write how to describe them, like "a large hospital system".</span></li>
+    <li><b>Short interview answers</b><span class="muted">Answer first. One story. Under 90 seconds.</span></li>
+    <li><b>One folder and one chat per job</b><span class="muted">Each application stays tidy and easy to find.</span></li>
+  </ul>
+</section>
+
+<section id="level3" data-level="level3">
+  <div class="sec-head"><span class="tag">Level 3</span><h2>Make it reusable with a Project</h2></div>
+  <p class="muted">A Project is a saved workspace. It remembers the instructions and your files, so you don't paste them every time.</p>
   <ol class="steps">
     <li><div class="row"><input type="checkbox" id="s-proj"><label for="s-proj">Create a Project called "Career Kit"</label></div>
       <div class="sub">
         <ol data-for="chatgpt"><li>In the left menu, tap <span class="click">New project</span>.</li><li>Name it <b>Career Kit</b>.</li></ol>
         <ol data-for="claude"><li>In the left menu, tap <span class="click">Projects</span>.</li><li>Tap <span class="click">+ New Project</span>. Name it <b>Career Kit</b>.</li></ol>
-        <p class="note" data-for="claude">Free Claude allows up to 5 Projects. Set it up on a computer. Mobile may not show this.</p>
-        <p class="note" data-for="chatgpt">Free ChatGPT allows many Projects, but only 5 files in each one.</p></div></li>
+        <div data-for="claude"><div class="note limit"><svg aria-hidden="true"><use href="#i-limit"/></svg><div><b>Free plan limit</b>Up to 5 Projects. Set it up on a computer; mobile may not show this.</div></div></div>
+        <div data-for="chatgpt"><div class="note limit"><svg aria-hidden="true"><use href="#i-limit"/></svg><div><b>Free plan limit</b>Many Projects, but only 5 files in each one.</div></div></div></div></li>
 
     <li><div class="row"><input type="checkbox" id="s-instr"><label for="s-instr">Paste the instructions into the Project</label></div>
       <div class="sub">
-        <p data-for="chatgpt">Open the project. Find <span class="click">Instructions</span> (sometimes under the project's settings). Paste the Career Kit instructions. Save.</p>
+        <p data-for="chatgpt">Open the project. Find <span class="click">Instructions</span> (sometimes in the project's settings). Paste the Career Kit instructions. Save.</p>
         <p data-for="claude">Open the project. Find <span class="click">Instructions</span> (or "Set project instructions"). Paste the Career Kit instructions. Save.</p>
-        <p class="note" data-for="chatgpt">Don't use ChatGPT's "Custom instructions" setting for this. It holds only 1,500 characters. Career Kit needs about 6,600.</p></div></li>
+        <button class="btn small" type="button" data-copy="prompt" data-ok="Copied">Copy instructions again</button>
+        <div data-for="chatgpt"><div class="note limit"><svg aria-hidden="true"><use href="#i-limit"/></svg><div><b>Free plan limit</b>Don't use ChatGPT's "Custom instructions" setting for this. It holds only 1,500 characters.</div></div></div></div></li>
 
     <li><div class="row"><input type="checkbox" id="s-files"><label for="s-files">Add your master files</label></div>
-      <div class="sub"><p>Upload these to the Project's files. Put the folder number at the front of each name so they stay in order.</p>
+      <div class="sub"><p>Upload these to the Project's files. The number at the front keeps them in order.</p>
         <div class="tree">01_profile_candidate-profile.md
 02_resume_master.docx
 03_linkedin.txt
 04_stories.md
 05_rules.md   (naming rules, writing likes)</div>
-        <p class="note">Projects keep files in one flat list, not folders. The number at the front does the job of a folder.</p>
-        <p class="note" data-for="chatgpt">That's exactly 5 files, the free limit. Keep job posts in the chat, not the Project. Uploads may count toward your 3 a day.</p></div></li>
+        <div class="note tip"><svg aria-hidden="true"><use href="#i-tip"/></svg><div><b>Tip</b>Projects keep files in one flat list, not folders. The number at the front does the job of a folder.</div></div>
+        <div data-for="chatgpt"><div class="note limit"><svg aria-hidden="true"><use href="#i-limit"/></svg><div><b>Free plan limit</b>That's exactly 5 files, the free limit. Keep job posts in the chat. Uploads may count toward your 3 a day.</div></div></div></div></li>
 
     <li><div class="row"><input type="checkbox" id="s-perjob"><label for="s-perjob">Start one chat per job</label></div>
-      <div class="sub"><p>Inside the Project, start a new chat for each job. Rename it to match the folder, like <b>Acme_Support-Lead</b>.</p>
-        <p>In that chat, work in this order:</p>
+      <div class="sub"><p>Inside the Project, start a new chat for each job. Rename it to match the folder, like <b>Acme_Support-Lead</b>. Then work in this order:</p>
         <ol><li>Paste the job post. Ask: "Decode this job and check my fit."</li>
         <li>Ask: "Tailor my resume to it. Ask me for any missing numbers."</li>
         <li>Ask: "Is this ready to send?"</li>
-        <li>When you get an interview: "I have an interview on [day]. Help me prepare, one step at a time."</li>
+        <li>Interview booked: "I have an interview on [day]. Help me prepare, one step at a time."</li>
         <li>After it: "The interview just ended. Help me with a thank-you note."</li></ol>
-        <p class="note tip">Save what you like into that job's folder on your computer. The folder is your record. The chat is your workspace.</p></div></li>
+        <div class="note tip"><svg aria-hidden="true"><use href="#i-tip"/></svg><div><b>Tip</b>Save what you like into that job's folder. The folder is your record. The chat is your workspace.</div></div></div></li>
   </ol>
 </section>
 
-<section id="level4">
-  <div class="level"><span class="tag">Level 4</span><h2>Optional: install it as a skill</h2></div>
+<section id="level4" data-level="level4">
+  <div class="sec-head"><span class="tag">Level 4</span><h2>Optional: install it as a skill</h2></div>
   <div data-for="claude">
-    <p>A skill is Career Kit installed into Claude, so it starts on its own when you mention a resume or interview. This is a bit more technical. The Project in Level 3 does almost the same job.</p>
+    <p class="muted">A skill is Career Kit installed into Claude, so it starts on its own when you mention a resume or interview. This is a bit more technical. The Project in Level 3 does almost the same job.</p>
     <ol class="steps">
       <li><div class="row"><input type="checkbox" id="s-cap"><label for="s-cap">Turn on file features</label></div>
-        <div class="sub"><p><span class="click">Settings</span> then <span class="click">Capabilities</span>. Turn on <span class="click">Code execution and file creation</span> (it may say "Create and edit files").</p></div></li>
+        <div class="sub"><p><span class="click">Settings</span>, then <span class="click">Capabilities</span>. Turn on <span class="click">Code execution and file creation</span> (it may say "Create and edit files").</p></div></li>
       <li><div class="row"><input type="checkbox" id="s-upload"><label for="s-upload">Upload the skill file</label></div>
-        <div class="sub"><ol><li>Download <a href="https://github.com/adoptadaptevolve-ux/career-kit/raw/main/download/career-kit.skill"><b>career-kit.skill</b></a> to your computer.</li><li>Go to <span class="click">Customize</span> then <span class="click">Skills</span>.</li><li>Tap <span class="click">+</span>, then <span class="click">Upload a skill</span>. Pick the file.</li></ol>
-        <p class="note">Anthropic's pages disagree on whether free accounts can upload their own skills. If you don't see "Upload a skill", use the Project instead.</p></div></li>
+        <div class="sub"><ol><li>Download <a href="https://github.com/adoptadaptevolve-ux/career-kit/raw/main/download/career-kit.skill"><b>career-kit.skill</b></a> to your computer.</li><li>Go to <span class="click">Customize</span>, then <span class="click">Skills</span>.</li><li>Tap <span class="click">+</span>, then <span class="click">Upload a skill</span>. Pick the file.</li></ol>
+        <div class="note limit"><svg aria-hidden="true"><use href="#i-limit"/></svg><div><b>Free plan limit</b>Anthropic's pages disagree on whether free accounts can upload skills. If you don't see "Upload a skill", use the Project instead.</div></div></div></li>
       <li><div class="row"><input type="checkbox" id="s-tryskill"><label for="s-tryskill">Try it</label></div>
         <div class="sub"><p>Start a new chat and say "Here's my resume, why am I not getting interviews?" No pasting needed.</p></div></li>
     </ol>
   </div>
   <div data-for="chatgpt">
-    <p>Skills aren't available on free ChatGPT. Your Project from Level 3 is the best free option, and it works well.</p>
-    <p class="note">Shared "GPTs" are being shut down on Dec 11, 2026, and new ones can't be made on personal plans. Career Kit doesn't use one.</p>
+    <div class="card" style="margin-top:12px"><p style="margin:0">Skills aren't available on free ChatGPT. Your Project from Level 3 is the best free option, and it works well.</p></div>
+    <div class="note limit"><svg aria-hidden="true"><use href="#i-limit"/></svg><div><b>Free plan limit</b>Shared "GPTs" shut down on Dec 11, 2026, and personal plans can't make new ones. Career Kit doesn't use one.</div></div>
   </div>
 </section>
 
 <section id="limits">
   <h2>Free plan limits at a glance</h2>
-  <p>These change often. Checked Nov 9, 2026.</p>
+  <p class="muted small">These change often. Checked Nov 9, 2026.</p>
   <div class="tablewrap"><table>
-    <thead><tr><th>Thing</th><th>ChatGPT Free</th><th>Claude Free</th></tr></thead>
+    <thead><tr><th scope="col">Thing</th><th scope="col">ChatGPT Free</th><th scope="col">Claude Free</th></tr></thead>
     <tbody>
       <tr><td>File uploads</td><td>3 a day</td><td>Up to 20 per chat</td></tr>
-      <tr><td>Messages</td><td>Everyday chats are unlimited. Tools like uploads have limits.</td><td>An allowance that resets every 5 hours. A weekly cap may also apply.</td></tr>
+      <tr><td>Messages</td><td>Everyday chats unlimited; tools like uploads have limits</td><td>Allowance resets every 5 hours; a weekly cap may apply</td></tr>
       <tr><td>Projects</td><td>Many, 5 files each</td><td>Up to 5</td></tr>
-      <tr><td>Custom instructions</td><td>1,500 characters (too short for Career Kit)</td><td>Use a Project instead</td></tr>
-      <tr><td>Skills</td><td>Not on free</td><td>Maybe. Sources disagree.</td></tr>
+      <tr><td>Custom instructions</td><td>1,500 characters (too short)</td><td>Use a Project instead</td></tr>
+      <tr><td>Skills</td><td>Not on free</td><td>Maybe; sources disagree</td></tr>
       <tr><td>Web search</td><td>Yes</td><td>Yes</td></tr>
       <tr><td>Searching old chats</td><td>Light memory only</td><td>Paid only</td></tr>
-      <tr><td>Learns from your chats</td><td>Yes, unless you turn it off</td><td>Yes, unless you turn it off</td></tr>
+      <tr><td>Learns from your chats</td><td>Yes, unless turned off</td><td>Yes, unless turned off</td></tr>
     </tbody>
   </table></div>
 </section>
 
 <section id="help">
   <h2>If something goes wrong</h2>
-  <dl class="faq card">
+  <dl class="faq card" style="margin-top:12px">
     <dt>"Chat memory full" or the chat gets confused</dt><dd>Start a new chat. Paste the instructions and your saved profile again.</dd>
     <dt>"Limit reached"</dt><dd><span data-for="chatgpt">You hit a tool limit, like 3 uploads. Paste text instead, or wait until later.</span><span data-for="claude">Wait for the reset time shown. A new chat won't reset it.</span></dd>
-    <dt>It can't see what I pasted</dt><dd>Paste again with Ctrl+Shift+V (Cmd+Shift+V on Mac). Or attach the instructions as a text file.</dd>
-    <dt>It wrote something that isn't true about me</dt><dd>Say "That's not true. Only use facts from my profile." Fix your profile if it was wrong there.</dd>
+    <dt>It can't see what I pasted</dt><dd>Paste again with Ctrl+Shift+V (Cmd+Shift+V on Mac), or attach the instructions as a text file.</dd>
+    <dt>It wrote something that isn't true about me</dt><dd>Say "That's not true. Only use facts from my profile." If your profile was wrong, fix it there too.</dd>
     <dt>The answer is too long</dt><dd>Say "Shorter, please. One step at a time."</dd>
     <dt>The menus look different</dt><dd>Apps change often. Search the app's help center for the button name in this guide.</dd>
   </dl>
@@ -407,25 +529,26 @@ Start by asking what I need help with today, unless I have already said.</pre></
 
 <section id="privacy">
   <h2>Stay safe</h2>
-  <ul class="dos">
-    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Turn off training (Level 1, step 1).</span></li>
-    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Upload only your safe resume copy.</span></li>
-    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Delete career chats when you're done with a job.</span></li>
-    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Read every line before you send it to an employer. You are responsible for what you submit.</span></li>
+  <ul class="ticks">
+    <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Turn off training (Level 1, step 1).</span></li>
+    <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Upload only your safe resume copy.</span></li>
+    <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Delete career chats when you're done with a job.</span></li>
+    <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Read every line before you send it to an employer. You're responsible for what you submit.</span></li>
   </ul>
 </section>
 
 <footer>
   <p>Share this guide: <b>adoptadaptevolve-ux.github.io/career-kit/guide</b>. Source and files: <a href="https://github.com/adoptadaptevolve-ux/career-kit">github.com/adoptadaptevolve-ux/career-kit</a>.</p>
   <p>Career Kit is free to use and share. It combines recruiter-lens by Abdul Rahman P Z (MIT license) with resume and interview workflows. Not legal or financial advice.</p>
-  <p>Design: Atkinson Hyperlegible font by the Braille Institute (SIL Open Font License, free for commercial use). Check icon from Lucide (ISC license).</p>
+  <p>Design: Atkinson Hyperlegible font by the Braille Institute (SIL Open Font License). Check icon from Lucide (ISC license).</p>
+  <p><button class="reset" type="button" id="reset">Clear my checkmarks</button></p>
 </footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite">Copied</div>
 
 <script>
 (function(){
-  var store={get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+  var store={get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}},del:function(k){try{localStorage.removeItem(k)}catch(e){}}};
   var body=document.body;
   function setApp(app){
     body.setAttribute('data-app',app);
@@ -440,21 +563,39 @@ Start by asking what I need help with today, unless I have already said.</pre></
   function update(){
     var shown=boxes.filter(visible), done=shown.filter(function(b){return b.checked});
     boxes.forEach(function(b){b.closest('li').classList.toggle('done',b.checked)});
-    document.getElementById('progtext').textContent=done.length+' of '+shown.length+' done';
+    document.getElementById('progtext').textContent=done.length+' of '+shown.length+' steps';
     document.getElementById('progfill').style.width=(shown.length?done.length/shown.length*100:0)+'%';
+    document.querySelectorAll('.jumps a[data-level]').forEach(function(a){
+      var sec=document.getElementById(a.getAttribute('data-level'));
+      var bs=[].slice.call(sec.querySelectorAll('input[type=checkbox]')).filter(visible);
+      var d=bs.filter(function(b){return b.checked}).length;
+      a.querySelector('.ct').textContent=bs.length?d+'/'+bs.length:'';
+      a.classList.toggle('complete',bs.length>0&&d===bs.length);
+    });
+    var l2=[].slice.call(document.querySelectorAll('#level2 input[type=checkbox]')).filter(visible);
+    document.getElementById('celebrate-l2').classList.toggle('show',l2.length>0&&l2.every(function(b){return b.checked}));
   }
   boxes.forEach(function(b){
     if(store.get('ck-'+b.id)==='1')b.checked=true;
     b.addEventListener('change',function(){store.set('ck-'+b.id,b.checked?'1':'0');update()});
   });
-  var toast=document.getElementById('toast');
-  function flash(t){toast.textContent=t;toast.classList.add('show');setTimeout(function(){toast.classList.remove('show')},1600)}
+  document.getElementById('reset').addEventListener('click',function(){
+    boxes.forEach(function(b){b.checked=false;store.del('ck-'+b.id)}); update(); flash('Checkmarks cleared');
+  });
+  var toast=document.getElementById('toast'),tt;
+  function flash(t){toast.textContent=t;toast.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove('show')},1800)}
   document.querySelectorAll('[data-copy]').forEach(function(btn){
     btn.addEventListener('click',function(){
       var el=document.getElementById(btn.getAttribute('data-copy'));
-      var text=el.textContent;
+      var text=el.textContent, label=btn.querySelector('span')||btn, orig=label.textContent;
+      function ok(){
+        flash(btn.getAttribute('data-ok')||'Copied');
+        btn.classList.add('ok'); label.textContent='Copied';
+        setTimeout(function(){btn.classList.remove('ok');label.textContent=orig},2000);
+        if(btn.getAttribute('data-copy')==='prompt'){var c=document.getElementById('s-copy');if(c&&!c.checked){c.checked=true;store.set('ck-s-copy','1');update()}}
+      }
       if(navigator.clipboard&&navigator.clipboard.writeText){
-        navigator.clipboard.writeText(text).then(function(){flash('Copied')},function(){fallback(el)});
+        navigator.clipboard.writeText(text).then(ok,function(){fallback(el)});
       } else fallback(el);
     });
   });
@@ -462,7 +603,7 @@ Start by asking what I need help with today, unless I have already said.</pre></
     var d=el.closest('details'); if(d)d.open=true;
     var r=document.createRange(); r.selectNodeContents(el);
     var s=window.getSelection(); s.removeAllRanges(); s.addRange(r);
-    flash('Selected. Now tap Copy.');
+    flash('Text selected. Tap Copy on your keyboard menu.');
   }
   var saved=store.get('ck-app');
   setApp(saved==='claude'?'claude':'chatgpt');
