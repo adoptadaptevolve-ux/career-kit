@@ -1,6 +1,9 @@
 # Career Kit
 
-A free job-search assistant for Claude. It walks through a job search in the order it happens:
+**Beginner guide:** https://adoptadaptevolve-ux.github.io/career-kit/guide/  
+**Skill download:** [download/career-kit.skill](download/career-kit.skill)
+
+A free job-search assistant for Claude and ChatGPT. It walks through a job search in the order it happens:
 
 | Phase | What you get |
 |---|---|
@@ -23,7 +26,7 @@ You can start at any phase. It only asks for what that phase needs.
 The skill lives in [`skills/career-kit/`](skills/career-kit/).
 
 - **Claude Code:** copy the `skills/career-kit` folder into `~/.claude/skills/` (personal) or `.claude/skills/` in a project.
-- **Claude apps:** download this repo as a ZIP, zip just the `skills/career-kit` folder, and upload it as a custom skill. Check Claude's help center for where custom skills are uploaded on your plan.
+- **Claude apps:** download [`download/career-kit.skill`](download/career-kit.skill) and upload it under **Customize > Skills > + > Upload a skill** (turn on **Settings > Capabilities > Code execution and file creation** first). Free-plan support for custom skills is unclear; if you don't see the option, use a Project instead.
 
 Then just talk normally: "here's my resume, why am I not getting interviews?" or "I have an interview Thursday, here's the job posting."
 
